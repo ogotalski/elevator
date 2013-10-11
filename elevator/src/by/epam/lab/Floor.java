@@ -46,6 +46,9 @@ public class Floor implements Comparable<Floor> {
 		dispatchStoryContainer.remove(passenger);
 	}
 
+	public void addDispatchPassenger (Passenger passenger){
+		dispatchStoryContainer.add(passenger);
+	}
 	public boolean hasPassengers() {
 		if (dispatchStoryContainer.size() > 0)
 			return true;

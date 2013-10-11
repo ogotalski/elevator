@@ -14,6 +14,7 @@ public class Passenger {
 		this.destFloor = destFloor;
 		this.currentFloor = currentFloor;
 		transportationState = TransportationState.NOT_STARTED;
+		currentFloor.addDispatchPassenger(this);
 	}
 
 	public Floor getCurrentFloor() {

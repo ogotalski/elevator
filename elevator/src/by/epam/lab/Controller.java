@@ -113,18 +113,16 @@ public class Controller {
 					}
 					while (itr.hasNext()) {
 						floor = itr.next();
-						if (floor.equals(nextFloor)) {
+						if (floor.equals(nextFloor) || (elevator.hasPlaces()
+								&& floor.hasPassengers())){
 							elevator.move(floor);
-							floor.getArrivalStoryContainer().notifyAll();
-							while (outOnNextFloor != 0) {
-								this.wait();
-							}
-							break;
-						} else if (elevator.hasPlaces()
-								&& floor.hasPassengers()) {
-							elevator.move(floor);
+							isElevatorMoved = true;
 							break;
 						}
+					}
+					floor.getArrivalStoryContainer().notifyAll();
+					while (outOnNextFloor != 0) {
+						this.wait();
 					}
 				}
 				switch (direction) {
