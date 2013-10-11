@@ -3,7 +3,7 @@ package by.epam.lab;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jws.Oneway;
+import by.epam.lab.utils.ReverseIterator;
 
 public class Controller {
 	private enum Direction {
@@ -13,7 +13,6 @@ public class Controller {
 		private Direction(int i) {
 			intDirection = i;
 		}
-
 	}
 
 	private final Building building;
@@ -76,6 +75,7 @@ public class Controller {
 		synchronized (this) {
 			outOnNextFloor--;
 		}
+		this.notifyAll();
 		synchronized (passengerFloor) {
 			passengerFloor.addArrivalPassenger(passenger);
 		}
@@ -83,30 +83,63 @@ public class Controller {
 	}
 
 	public void goNextFloor(Floor floor) throws InterruptedException {
-		while (elevator.hasPlaces()) {
-			elevator.move(floor);
-		}
+
+		elevator.move(floor);
 		floor.getArrivalStoryContainer().notifyAll();
-		while (outOnNextFloor != 0){
+		while (outOnNextFloor != 0) {
 			this.wait();
 		}
 		floor.getDispatchStoryContainer().notifyAll();
-		while (elevator.hasPlaces() || floor.hasPassengers()){
+		while (elevator.hasPlaces() || floor.hasPassengers()) {
 			this.wait();
 		}
 	}
 
 	public void doJob() {
 		List<Floor> floors = building.getFloors();
-		Iterator<Floor> itr = floors.iterator(); // listiterator
+		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
+		boolean isElevatorMoved = true;
 		try {
-		while (itr.hasNext()) {
-			floor = itr.next();
-			goNextFloor(floor);
-		}
-		} catch (InterruptedException e){
-			
+			while (isElevatorMoved) {
+				isElevatorMoved = false;
+				while (itr.hasNext()) {
+					floor = elevator.getCurrentFloor();
+					if (floor.hasPassengers()) {
+						floor.getDispatchStoryContainer().notifyAll();
+						while (elevator.hasPlaces() || floor.hasPassengers()) {
+							this.wait();
+						}
+					}
+					while (itr.hasNext()) {
+						floor = itr.next();
+						if (floor.equals(nextFloor)) {
+							elevator.move(floor);
+							floor.getArrivalStoryContainer().notifyAll();
+							while (outOnNextFloor != 0) {
+								this.wait();
+							}
+							break;
+						} else if (elevator.hasPlaces()
+								&& floor.hasPassengers()) {
+							elevator.move(floor);
+							break;
+						}
+					}
+				}
+				switch (direction) {
+				case UP:
+					itr = new ReverseIterator<Floor>(floors);
+					direction = Direction.DOWN;
+					break;
+				case DOWN:
+					itr = floors.iterator();
+					direction = Direction.UP;
+					break;
+				}
+			}
+		} catch (InterruptedException e) {
+
 		}
 	}
 }

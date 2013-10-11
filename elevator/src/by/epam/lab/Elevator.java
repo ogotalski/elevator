@@ -36,7 +36,7 @@ public class Elevator {
 		this.currentFloor = currentFloor;
 	}
 
-	public synchronized boolean hasPlaces() {
+	public boolean hasPlaces() {
 		if (capacity >= elevatorContainer.size())
 			return true;
 		else
