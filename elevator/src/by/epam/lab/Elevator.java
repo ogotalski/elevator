@@ -44,37 +44,20 @@ public class Elevator {
 	}
 
 	public boolean addPassenger(Passenger passenger) {
-		Floor passengerFloor = passenger.getCurrentFloor();
-		
-		synchronized (this) {
-			if (!(passengerFloor.equals(currentFloor) && hasPlaces())) {
-				return false;
-			} else {
-				elevatorContainer.add(passenger);
-			} 	
+		if (passenger.getCurrentFloor().equals(currentFloor) && hasPlaces()) {
+			elevatorContainer.add(passenger);
+			return true;
+		} else {
+			return false;
 		}
-		synchronized (passengerFloor) {
-			passengerFloor.removeDispatchPassenger(passenger); 
-		}
-		return true;
-	}
+}
 
 	public boolean removePassenger(Passenger passenger) {
-		Floor passengerFloor = passenger.getDestFloor();
-		
-		synchronized (this) {
-			if (!passengerFloor.equals(currentFloor)) {
-				return false;
-			} else {
+			if (passenger.getDestFloor().equals(currentFloor)) {
 				elevatorContainer.remove(passenger);
-			}
-		} 
-		synchronized (passengerFloor) {
-			passengerFloor.addArrivalPassenger(passenger);
+				return true;
+			} else
+				return false;
 		}
-		synchronized (passenger) {
-			passenger.setCurrentFloor(passengerFloor);
-		}
-		return true;
-	}
+		
 }

@@ -3,7 +3,7 @@ package by.epam.lab;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Floor {
+public class Floor implements Comparable<Floor>{
 	  private static int nextId = 1; 
       private final int id;
       private List<Passenger> dispatchStoryContainer;
@@ -37,5 +37,11 @@ public class Floor {
     public void removeDispatchPassenger(Passenger passenger){
     	dispatchStoryContainer.remove(passenger);
     }
+	
+
+	@Override
+	public int compareTo(Floor o) {
+		return id - o.id;
+	}
       
 }
