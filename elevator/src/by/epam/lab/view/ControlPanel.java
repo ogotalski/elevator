@@ -39,9 +39,8 @@ public class ControlPanel extends JPanel {
 		animationBoostSlider.setValue(animationBoost);
 		this.add(label);
 		this.add(animationBoostSlider);
-		JButton button = new JButton("Start");
-		//button.addActionListener(l)
-		
+		button = new JButton("Start");
+		this.add(button);
 		this.setVisible(true);
 		
 	}

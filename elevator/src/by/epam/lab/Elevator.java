@@ -38,6 +38,9 @@ public class Elevator {
     public List<Passenger> getElevatorContainer() {
 		return elevatorContainer;
 	}
+    public Passenger[] getElevatorPassengers() {
+		return elevatorContainer.toArray(new Passenger[elevatorContainer.size()]);
+	}
 
 	public Floor getCurrentFloor() {
 	return currentFloor;

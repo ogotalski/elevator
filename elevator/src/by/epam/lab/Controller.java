@@ -69,9 +69,13 @@ public class Controller {
 
 	public boolean addPassenger(Passenger passenger) {
 		Floor passengerFloor = passenger.getCurrentFloor();
-		TransportationTask.decReadyThreads();
+		
 		synchronized (this) {
+			
 			try {
+				if (!elevator.getCurrentFloor().equals(passenger.getCurrentFloor()))
+					return false;
+				TransportationTask.decReadyThreads();
 				if (elevator.getCurrentFloor().compareTo(
 						passenger.getDestFloor())
 						* direction.intDirection > 0)
@@ -108,7 +112,7 @@ public class Controller {
 		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
 		int isElevatorMoved = 0;
-		working = true;
+		
 		Object waitObject;
 		try {
 			while (isElevatorMoved < 2) {
@@ -116,6 +120,7 @@ public class Controller {
 					floor = elevator.getCurrentFloor();
 					waitObject = floor.getDispatchStoryContainer();
 					synchronized (waitObject) {
+						working = true;
 						if (floor.hasPassengers()) {
 							TransportationTask.setReadyThreads(floor
 									.getDispatchStoryContainer().size());

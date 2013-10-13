@@ -29,7 +29,12 @@ public class Floor implements Comparable<Floor> {
 	public List<Passenger> getArrivalStoryContainer() {
 		return arrivalStoryContainer;
 	}
-
+    public synchronized Passenger[] getDispatchPassengers(){
+    	return   dispatchStoryContainer.toArray(new Passenger[dispatchStoryContainer.size()]);
+    }
+    public synchronized Passenger[] getArrivalPassengers(){
+    	return  arrivalStoryContainer.toArray(new Passenger[arrivalStoryContainer.size()]);
+    }
 	public void setArrivalStoryContainer(List<Passenger> arrivalStoryContainer) {
 		this.arrivalStoryContainer = arrivalStoryContainer;
 	}
@@ -38,18 +43,18 @@ public class Floor implements Comparable<Floor> {
 		return id;
 	}
 
-	public void addArrivalPassenger(Passenger passenger) {
+	public synchronized void addArrivalPassenger(Passenger passenger) {
 		arrivalStoryContainer.add(passenger);
 	}
 
-	public void removeDispatchPassenger(Passenger passenger) {
+	public synchronized void removeDispatchPassenger(Passenger passenger) {
 		dispatchStoryContainer.remove(passenger);
 	}
 
-	public void addDispatchPassenger (Passenger passenger){
+	public synchronized void addDispatchPassenger (Passenger passenger){
 		dispatchStoryContainer.add(passenger);
 	}
-	public boolean hasPassengers() {
+	public synchronized boolean hasPassengers() {
 		if (dispatchStoryContainer.size() > 0)
 			return true;
 		else
@@ -59,6 +64,28 @@ public class Floor implements Comparable<Floor> {
 	@Override
 	public int compareTo(Floor o) {
 		return o == null ? 1 : id - o.id;
+	}
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Floor other = (Floor) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 
 	@Override

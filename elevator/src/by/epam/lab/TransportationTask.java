@@ -29,7 +29,7 @@ public class TransportationTask implements Runnable {
 
 	@Override
 	public void run() {
-
+		
 		passenger.setTransportationState(TransportationState.IN_PROGRESS);
 
 		try {
@@ -37,7 +37,7 @@ public class TransportationTask implements Runnable {
 			Object waitObject = floor.getDispatchStoryContainer();
 			synchronized (controller) {
 				decReadyThreads();
-				System.out.println("ready " + readyThreads + passenger);
+				System.out.println("ready " + passenger);
 				controller.notifyAll();
 
 			}

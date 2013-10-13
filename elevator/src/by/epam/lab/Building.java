@@ -26,6 +26,7 @@ public class Building {
 		List<Floor> floorList = new ArrayList<Floor>(storiesNumber);
 		Floor floor = new Floor();
 		Elevator elevator = new Elevator(floor, elevatorCapacity);
+		floorList.add(floor);
 		for (int i = 1; i < storiesNumber; i++ ){
 			floorList.add(new Floor());
 		}
@@ -48,11 +49,11 @@ public class Building {
 	}
 	
 	public void startElevator(){
-		
+		ThreadGroup group = Thread.currentThread().getThreadGroup();
 		for(Floor floor: floors){
 			for(Passenger passenger : floor.getDispatchStoryContainer()){
 				TransportationTask.incReadyThreads();
-				new Thread(new TransportationTask(controller, passenger)).start();
+				new Thread(group, new TransportationTask(controller, passenger)).start();
 				
 			}
 		}
