@@ -24,7 +24,7 @@ public class Elevator {
 	elevatorContainer = new ArrayList<Passenger>(capacity);
     }
 
-    public void move(Floor floor) {
+    public synchronized void  move(Floor floor) {
 	currentFloor = floor;
 	System.out
 		.println("=========================================================");
@@ -38,11 +38,11 @@ public class Elevator {
     public List<Passenger> getElevatorContainer() {
 		return elevatorContainer;
 	}
-    public Passenger[] getElevatorPassengers() {
+    public synchronized Passenger[] getElevatorPassengers() {
 		return elevatorContainer.toArray(new Passenger[elevatorContainer.size()]);
 	}
 
-	public Floor getCurrentFloor() {
+	public synchronized Floor getCurrentFloor() {
 	return currentFloor;
     }
 
@@ -57,7 +57,7 @@ public class Elevator {
 	    return false;
     }
 
-    public boolean addPassenger(Passenger passenger) {
+    public synchronized boolean addPassenger(Passenger passenger) {
 	if (passenger.getCurrentFloor().equals(currentFloor) && hasPlaces()) {
 	    elevatorContainer.add(passenger);
 	    System.out.println("ELEVATOR IN passenger " + passenger

@@ -1,5 +1,7 @@
 package by.epam.lab.controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,14 +14,17 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 
 import by.epam.lab.Building;
 import by.epam.lab.Elevator;
 import by.epam.lab.Floor;
+import by.epam.lab.utils.ReverseIterator;
 import by.epam.lab.view.ControlPanel;
 import by.epam.lab.view.FloorView;
 import by.epam.lab.view.MainFrame;
 import by.epam.lab.view.Action.ButtonActionListener;
+import by.epam.lab.view.Action.UpdateListener;
 
 
 public class ViewController implements IViewController {
@@ -33,6 +38,7 @@ public class ViewController implements IViewController {
 	private ThreadGroup threadGroup;
 	private Map<Floor,FloorView> floorsMap;
 	private Building building;
+	private Timer timer;
 	public ViewController() {
 		init();
 		
@@ -73,7 +79,10 @@ public class ViewController implements IViewController {
 			
 			List <Floor> floors = building.getFloors();
 			Elevator elevator = building.getElevator();
-			for(Floor floor : floors ){
+			ReverseIterator<Floor> iterator = new ReverseIterator<Floor>(floors);
+			Floor floor;
+			while( iterator.hasNext() ){
+				    floor = iterator.next();
 					view = new FloorView(floor.getDispatchPassengers(), floor.getArrivalPassengers());
 					panel.add(view);
 					floorsMap.put(floor, view);
@@ -81,17 +90,25 @@ public class ViewController implements IViewController {
 			view = floorsMap.get(elevator.getCurrentFloor());
 			view.setElevatorPassengers(elevator.getElevatorPassengers());
 			panel.setVisible(true);
-			//floorsMap.put(elevator.getCurrentFloor(), view);
+			
 			JScrollPane pane = new JScrollPane(panel);
 			mainFrame.add(pane);
 		}
 		controlPanel.getButton().setText("Abort");
 		new Thread(threadGroup,this).start();
-		//this.run();
-		
+		timer = new Timer(DEFAULT_SLEEP-999*animationBoost,new UpdateListener(this));
+		timer.start();
 	}
     public void updateView(){
     	
+    	for (Floor floor: building.getFloors()){
+    		floorsMap.get(floor).update(floor.getDispatchPassengers(), floor.getArrivalPassengers());
+    		
+    		
+    	}
+    	Elevator elevator = building.getElevator();
+    	floorsMap.get(elevator.getCurrentFloor()).setElevatorPassengers(elevator.getElevatorPassengers());
+    	mainFrame.repaint();
     }
 	@Override
 	public void abort() {

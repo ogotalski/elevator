@@ -38,7 +38,7 @@ public class FloorView extends JPanel {
 //			this.setBorder(title);
 		}
 
-		public synchronized void update(Passenger[] list) {
+		public synchronized void updateContainer(Passenger[] list) {
 			this.list = list;
 		}
 
@@ -125,10 +125,11 @@ public class FloorView extends JPanel {
 
 	public void update(Passenger[] dispathStory,
 			Passenger[] arrivalStory) {
-		dispath.update(dispathStory);
-		arrival.update(arrivalStory);
+		dispath.updateContainer(dispathStory);
+		arrival.updateContainer(arrivalStory);
+		elevator.updateContainer(null);
 	}
 	public void setElevatorPassengers( Passenger[] elevatorStory){
-		elevator.update(elevatorStory);
+		elevator.updateContainer(elevatorStory);
 	}
 }
