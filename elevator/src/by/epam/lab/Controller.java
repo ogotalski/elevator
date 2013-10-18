@@ -20,6 +20,7 @@ public class Controller {
 	private Direction direction;
 	private Floor nextFloor;
 	private int outOnNextFloor;
+	private boolean working;
 
 	public Controller(Building building, Elevator elevator) {
 		super();
@@ -27,8 +28,11 @@ public class Controller {
 		this.elevator = elevator;
 		this.nextFloor = elevator.getCurrentFloor();
 		this.outOnNextFloor = 0;
+		this.working = false;
 	}
-
+    public boolean isWorking(){
+    	return working;
+    }
 	public Building getBuilding() {
 		return building;
 	}
@@ -100,6 +104,7 @@ public class Controller {
 		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
 		boolean isElevatorMoved = true;
+		working = true;
 		try {
 			while (isElevatorMoved) {
 				isElevatorMoved = false;

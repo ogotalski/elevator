@@ -1,5 +1,7 @@
 package by.epam.lab;
 
+import javax.sql.rowset.spi.SyncResolver;
+
 public class TransportationTask implements Runnable {
 	private Controller controller;
 	private final Passenger passenger;
@@ -18,17 +20,21 @@ public class TransportationTask implements Runnable {
 		}
 
 		try {
-			synchronized (controller) {
-				
+			 { 
+				 synchronized (controller) {
+					 while (!controller.isWorking()){
+					controller.wait();
+				}
+				 }
 				while (!controller.addPassenger(passenger)) {
 					
-					passenger.getCurrentFloor().getDispatchStoryContainer().wait();
+					passenger.getCurrentFloor().wait();
 					
 				}
 				
 				while (!controller.removePassenger(passenger)) {
 					
-					passenger.getDestFloor().getArrivalStoryContainer().wait();
+					passenger.getDestFloor().wait();
 					
 				}
 				

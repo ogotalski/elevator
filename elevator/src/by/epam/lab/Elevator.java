@@ -26,6 +26,7 @@ public class Elevator {
 
 	public void move(Floor floor) {
 		currentFloor = floor;
+		System.out.println("ELEVATOR MOVED " + currentFloor.getId());
 	}
 
 	public Floor getCurrentFloor() {
@@ -46,6 +47,8 @@ public class Elevator {
 	public boolean addPassenger(Passenger passenger) {
 		if (passenger.getCurrentFloor().equals(currentFloor) && hasPlaces()) {
 			elevatorContainer.add(passenger);
+			System.out.println("ELEVATOR IN passenger " + passenger.getId() + "("+passenger.getCurrentFloor().getId()+"/"+passenger.getDestFloor().getId()+")" + " places " + elevatorContainer.size() + " floor " + currentFloor );
+
 			return true;
 		} else {
 			return false;
@@ -54,7 +57,10 @@ public class Elevator {
 
 	public boolean removePassenger(Passenger passenger) {
 			if (passenger.getDestFloor().equals(currentFloor)) {
+				passenger.setCurrentFloor(currentFloor);
 				elevatorContainer.remove(passenger);
+				System.out.println("ELEVATOR OUT passenger " + passenger.getId()+ "("+passenger.getCurrentFloor().getId()+"//"+passenger.getDestFloor().getId()+")" + " places " + elevatorContainer.size() + " floor " + currentFloor );
+
 				return true;
 			} else
 				return false;
