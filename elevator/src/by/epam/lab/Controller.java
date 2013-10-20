@@ -29,10 +29,13 @@ public class Controller {
 		this.nextFloor = elevator.getCurrentFloor();
 		this.outOnNextFloor = 0;
 		this.working = false;
+		this.direction = Direction.UP;
 	}
-    public boolean isWorking(){
-    	return working;
-    }
+
+	public boolean isWorking() {
+		return working;
+	}
+
 	public Building getBuilding() {
 		return building;
 	}
@@ -45,15 +48,14 @@ public class Controller {
 		return elevator.getCurrentFloor();
 	}
 
-	public boolean addPassenger(Passenger passenger) {
-		Floor passengerFloor = passenger.getCurrentFloor();
-
-		synchronized (elevator) {
-			if (!elevator.addPassenger(passenger))
-				return false;
-		}
-		synchronized (this) {
-
+	public void changeNextFloor() {
+		Floor passengerFloor;
+		nextFloor = null;
+		outOnNextFloor = 0;
+		for (Passenger passenger : elevator.getElevatorContainer()) {
+			passengerFloor = passenger.getDestFloor();
+			if (nextFloor == null)
+				nextFloor = passengerFloor;
 			int i = nextFloor.compareTo(passengerFloor);
 			if (i == 0) {
 				outOnNextFloor++;
@@ -62,82 +64,110 @@ public class Controller {
 				outOnNextFloor = 1;
 			}
 		}
-		synchronized (passengerFloor) {
-			passengerFloor.removeDispatchPassenger(passenger);
+		System.out.println("NEW NEXT FLOOR " + nextFloor);
+	}
+
+	public boolean addPassenger(Passenger passenger) {
+		Floor passengerFloor = passenger.getCurrentFloor();
+		TransportationTask.decReadyThreads();
+		synchronized (this) {
+			try {
+				if (elevator.getCurrentFloor().compareTo(
+						passenger.getDestFloor())
+						* direction.intDirection > 0)
+					return false;
+				if (!elevator.addPassenger(passenger))
+					return false;
+
+				passengerFloor.removeDispatchPassenger(passenger);
+			} finally {
+				this.notify(); // maybe better notifyAll?
+			}
 		}
-		this.notifyAll();
 		return true;
 	}
 
 	public boolean removePassenger(Passenger passenger) {
 		Floor passengerFloor = passenger.getDestFloor();
-
-		synchronized (elevator) {
-			if (!elevator.removePassenger(passenger))
-				return false;
-		}
 		synchronized (this) {
-			outOnNextFloor--;
-		}
-		this.notifyAll();
-		synchronized (passengerFloor) {
-			passengerFloor.addArrivalPassenger(passenger);
+			try {
+				if (!elevator.removePassenger(passenger))
+					return false;
+
+				outOnNextFloor--;
+				this.notify();
+			} finally {
+				passengerFloor.addArrivalPassenger(passenger);
+			}
 		}
 		return true;
-	}
-
-	public void goNextFloor(Floor floor) throws InterruptedException {
-
-		elevator.move(floor);
-		floor.getArrivalStoryContainer().notifyAll();
-		while (outOnNextFloor != 0) {
-			this.wait();
-		}
-		floor.getDispatchStoryContainer().notifyAll();
-		while (elevator.hasPlaces() || floor.hasPassengers()) {
-			this.wait();
-		}
 	}
 
 	public void doJob() {
 		List<Floor> floors = building.getFloors();
 		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
-		boolean isElevatorMoved = true;
+		int isElevatorMoved = 0;
 		working = true;
+		Object waitObject;
 		try {
-			while (isElevatorMoved) {
-				isElevatorMoved = false;
+			while (isElevatorMoved < 2) {
 				while (itr.hasNext()) {
 					floor = elevator.getCurrentFloor();
-					if (floor.hasPassengers()) {
-						floor.getDispatchStoryContainer().notifyAll();
-						while (elevator.hasPlaces() || floor.hasPassengers()) {
-							this.wait();
+					waitObject = floor.getDispatchStoryContainer();
+					synchronized (waitObject) {
+						if (floor.hasPassengers()) {
+							TransportationTask.setReadyThreads(floor
+									.getDispatchStoryContainer().size());
+							waitObject.notifyAll();
+
 						}
 					}
+					synchronized (this) {
+						while (TransportationTask.getReadyThreads() != 0) {
+							System.out.println("Controller go sleep " + floor);
+							this.wait();
+							System.out.println("Controller wakeup " + floor);
+						}
+						changeNextFloor();
+
+					}
+
+					System.out.println("Controller search nextFloor");
 					while (itr.hasNext()) {
 						floor = itr.next();
-						if (floor.equals(nextFloor) || (elevator.hasPlaces()
-								&& floor.hasPassengers())){
-							elevator.move(floor);
-							isElevatorMoved = true;
+						if (floor.equals(nextFloor)
+								|| (elevator.hasPlaces() && floor
+										.hasPassengers())) {
+							
+							isElevatorMoved = 0;
+							waitObject = floor.getArrivalStoryContainer();
+							synchronized (waitObject) {
+								elevator.move(floor);
+								waitObject.notifyAll();
+							}
+							if (floor.compareTo(nextFloor) == 0) {
+								synchronized (this) {
+									while (outOnNextFloor != 0) {
+										this.wait();
+									}
+								}
+							}
 							break;
 						}
 					}
-					floor.getArrivalStoryContainer().notifyAll();
-					while (outOnNextFloor != 0) {
-						this.wait();
-					}
+
 				}
 				switch (direction) {
 				case UP:
 					itr = new ReverseIterator<Floor>(floors);
 					direction = Direction.DOWN;
+					isElevatorMoved++;
 					break;
 				case DOWN:
 					itr = floors.iterator();
 					direction = Direction.UP;
+					isElevatorMoved++;
 					break;
 				}
 			}

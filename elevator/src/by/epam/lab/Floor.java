@@ -61,4 +61,12 @@ public class Floor implements Comparable<Floor> {
 		return o == null ? 1 : id - o.id;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Floor ");
+		builder.append(id);
+		return builder.toString();
+	}
+
 }

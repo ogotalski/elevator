@@ -66,6 +66,19 @@ public class Passenger {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Passenger [id=");
+		builder.append(id);
+		builder.append(", currentFloor=");
+		builder.append(currentFloor);
+		builder.append(", destFloor=");
+		builder.append(destFloor);
+		builder.append("]");
+		return builder.toString();
+	}
 	
      
 }
