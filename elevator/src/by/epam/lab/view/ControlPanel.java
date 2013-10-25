@@ -3,6 +3,7 @@ package by.epam.lab.view;
 import java.awt.Button;
 import java.awt.FlowLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +21,7 @@ public class ControlPanel extends JPanel {
 	public ControlPanel(int storiesNumber, int elevatorCapacity,
 			int passengersNumber, int animationBoost) {
 		super();
-				
+			
 		this.setLayout(new FlowLayout());
 		JLabel label = new JLabel("Stories Number");
 		 storiesNumberField = new JTextField(storiesNumber);

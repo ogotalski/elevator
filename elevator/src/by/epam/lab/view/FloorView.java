@@ -21,8 +21,9 @@ import javax.swing.border.TitledBorder;
 import by.epam.lab.Passenger;
 
 public class FloorView extends JPanel {
-	private final int size_Y = 40;
-
+	private final static int size_Y = 40;
+	private final static int MARGIN_Y = 5;
+	private final  static int MARGIN_X = 5;
 	private class PassengerContainerView extends JComponent {
 		private Passenger[] list;
 
@@ -54,15 +55,13 @@ public class FloorView extends JPanel {
 
 			 if (list != null) //TODO
 				for (Passenger passenger : list) {
-					ID = String.valueOf(passenger.getId());
-					x += (int) Math.round(g2.getFontMetrics()
-							.getStringBounds(ID, g2).getWidth());
-					if (getBounds().getMaxX() > x) {
-						//g2.drawString(ID, x, size_Y);
-						x += 2;
-					} else {
+					
+					x += drawPassenger(g2, passenger, x);
+					if (getSize().getWidth() < x) {
 						break;
 					}
+					x += MARGIN_X;
+
 				}
 			}
 
@@ -73,6 +72,23 @@ public class FloorView extends JPanel {
 			double rightX = getSize().getWidth();
 			g2.setColor(Color.GRAY);
 			g2.draw(new Rectangle2D.Double(0, 0, rightX-1, leftX-1));
+		}
+		public int drawPassenger(Graphics2D g2,Passenger passenger,int  x){
+			String ID = String.valueOf(passenger.getId());
+			int y;
+			
+			int width = (int) Math.round(g2.getFontMetrics()
+					.getStringBounds(ID, g2).getWidth());
+			int heigth = (int) Math.round(g2.getFontMetrics()
+					.getStringBounds(ID, g2).getHeight());
+			g2.setColor(Color.RED);
+			g2.drawString(ID, x + MARGIN_X, size_Y - 3 * MARGIN_Y  );
+			g2.draw(new Rectangle2D.Double(x, size_Y - 3* MARGIN_Y - heigth,  width + 2 * MARGIN_X, heigth + 1 * MARGIN_Y));
+
+			
+			
+			return width + 2 * MARGIN_X;
+			
 		}
 
 	}
