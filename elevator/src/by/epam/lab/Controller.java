@@ -14,7 +14,7 @@ public class Controller {
 			intDirection = i;
 		}
 	}
-
+    private int sleepTime;
 	private final Building building;
 	private final Elevator elevator;
 	private Direction direction;
@@ -67,7 +67,7 @@ public class Controller {
 		System.out.println("NEW NEXT FLOOR " + nextFloor);
 	}
 
-	public boolean addPassenger(Passenger passenger) {
+	public boolean addPassenger(Passenger passenger) throws InterruptedException {
 		Floor passengerFloor = passenger.getCurrentFloor();
 		
 		synchronized (this) {
@@ -84,6 +84,8 @@ public class Controller {
 					return false;
 
 				passengerFloor.removeDispatchPassenger(passenger);
+				Thread.sleep(sleepTime);
+			
 			} finally {
 				this.notify(); // maybe better notifyAll?
 			}
@@ -91,7 +93,7 @@ public class Controller {
 		return true;
 	}
 
-	public boolean removePassenger(Passenger passenger) {
+	public boolean removePassenger(Passenger passenger) throws InterruptedException {
 		Floor passengerFloor = passenger.getDestFloor();
 		synchronized (this) {
 			try {
@@ -99,15 +101,17 @@ public class Controller {
 					return false;
 
 				outOnNextFloor--;
-				this.notify();
-			} finally {
 				passengerFloor.addArrivalPassenger(passenger);
+				Thread.sleep(sleepTime);
+			} finally {
+				this.notify();
 			}
 		}
 		return true;
 	}
 
-	public void doJob() {
+	public void doJob(int sleepTime) {
+		this.sleepTime = sleepTime;
 		List<Floor> floors = building.getFloors();
 		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
@@ -141,6 +145,8 @@ public class Controller {
 					System.out.println("Controller search nextFloor");
 					while (itr.hasNext()) {
 						floor = itr.next();
+						elevator.move(floor);
+						Thread.sleep(this.sleepTime);
 						if (floor.equals(nextFloor)
 								|| (elevator.hasPlaces() && floor
 										.hasPassengers())) {
@@ -148,7 +154,7 @@ public class Controller {
 							isElevatorMoved = 0;
 							waitObject = floor.getArrivalStoryContainer();
 							synchronized (waitObject) {
-								elevator.move(floor);
+								
 								waitObject.notifyAll();
 							}
 							if (floor.compareTo(nextFloor) == 0) {

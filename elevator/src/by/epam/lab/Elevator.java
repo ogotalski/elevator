@@ -19,6 +19,7 @@ public class Elevator {
 
     public Elevator(Floor currentFloor, int capacity) {
 	super();
+	if (capacity < 1) throw new IllegalArgumentException("Elevator capacity must be greater than 0"); 
 	this.currentFloor = currentFloor;
 	this.capacity = capacity;
 	elevatorContainer = new ArrayList<Passenger>(capacity);
@@ -70,7 +71,7 @@ public class Elevator {
 	}
     }
 
-    public boolean removePassenger(Passenger passenger) {
+    public synchronized boolean removePassenger(Passenger passenger) {
 	if (passenger.getDestFloor().equals(currentFloor)) {
 	    passenger.setCurrentFloor(currentFloor);
 	    elevatorContainer.remove(passenger);

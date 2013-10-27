@@ -29,7 +29,7 @@ public class TransportationTask implements Runnable {
 
 	@Override
 	public void run() {
-		
+
 		passenger.setTransportationState(TransportationState.IN_PROGRESS);
 
 		try {
@@ -45,8 +45,7 @@ public class TransportationTask implements Runnable {
 				while (!controller.isWorking())
 					waitObject.wait();
 			}
-			
-			
+
 			synchronized (waitObject) {
 				System.out.println(passenger + " want to go");
 				while (!controller.addPassenger(passenger)) {
@@ -66,9 +65,9 @@ public class TransportationTask implements Runnable {
 					waitObject.wait();
 					System.out.println(passenger + " want to out");
 				}
+				passenger.setTransportationState(TransportationState.COMPLETED);
 			}
 
-			passenger.setTransportationState(TransportationState.COMPLETED);
 		} catch (InterruptedException e) {
 			passenger.setTransportationState(TransportationState.ABORTED);
 

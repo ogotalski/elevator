@@ -94,12 +94,15 @@ public class FloorView extends JPanel {
 	}
 
 	private class ElevatorView extends PassengerContainerView {
+		private static final int MAX_NUM_PASSENGERS_VIEW = 6;
 		private final int size_X = 100;
 
 		public ElevatorView(Passenger[] list) {
 			super(list);
-			this.setMaximumSize(new Dimension(size_X, size_Y));
+			this.setMaximumSize(new Dimension(size_X * MAX_NUM_PASSENGERS_VIEW, size_Y));
 			this.setMinimumSize(new Dimension(size_X, size_Y));
+			this.setPreferredSize(getMinimumSize());
+			this.setSize(getMinimumSize());
 
 		}
 

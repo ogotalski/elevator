@@ -77,6 +77,7 @@ public class Passenger {
 		builder.append(", destFloor=");
 		builder.append(destFloor);
 		builder.append("]");
+		builder.append(transportationState);
 		return builder.toString();
 	}
 	
