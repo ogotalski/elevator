@@ -1,5 +1,5 @@
 package by.epam.lab;
-
+import static by.epam.lab.utils.AppLogger.*;
 public class TransportationTask implements Runnable {
 	private static int readyThreads = 0;
 	private Controller controller;
@@ -37,7 +37,8 @@ public class TransportationTask implements Runnable {
 			Object waitObject = floor.getDispatchStoryContainer();
 			synchronized (controller) {
 				decReadyThreads();
-				System.out.println("ready " + passenger);
+				LOG.trace("ready " + passenger);
+				//System.out.println("ready " + passenger);
 				controller.notifyAll();
 
 			}
@@ -47,30 +48,31 @@ public class TransportationTask implements Runnable {
 			}
 
 			synchronized (waitObject) {
-				System.out.println(passenger + " want to go");
+				LOG.trace(passenger + " want to go");
 				while (!controller.addPassenger(passenger)) {
-					System.out.println(passenger + " go sleep1 "
+					LOG.trace(passenger + " go sleep1 "
 							+ Thread.currentThread().getId());
 					waitObject.wait();
-					System.out.println(passenger + " want to go");
+					LOG.trace(passenger + " want to go");
 				}
 			}
 			floor = passenger.getDestFloor();
 			waitObject = floor.getArrivalStoryContainer();
 			synchronized (waitObject) {
-				System.out.println(passenger + " want to out");
+				LOG.trace(passenger + " want to out");
 				while (!controller.removePassenger(passenger)) {
-					System.out.println(passenger + " go sleep2 "
+					LOG.trace(passenger + " go sleep2 "
 							+ Thread.currentThread().getId());
 					waitObject.wait();
-					System.out.println(passenger + " want to out");
+					LOG.trace(passenger + " want to out");
 				}
 				passenger.setTransportationState(TransportationState.COMPLETED);
 			}
 
 		} catch (InterruptedException e) {
 			passenger.setTransportationState(TransportationState.ABORTED);
-
+			LOG.trace("Transportation  interrupded " + passenger);
+			
 		}
 
 	}

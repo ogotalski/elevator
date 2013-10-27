@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import by.epam.lab.utils.ReverseIterator;
-
+import static by.epam.lab.utils.AppLogger.*;
 public class Controller {
 	private enum Direction {
 		UP(1), DOWN(-1);
@@ -64,7 +64,7 @@ public class Controller {
 				outOnNextFloor = 1;
 			}
 		}
-		System.out.println("NEW NEXT FLOOR " + nextFloor);
+		LOG.trace("NEW NEXT FLOOR " + nextFloor);
 	}
 
 	public boolean addPassenger(Passenger passenger) throws InterruptedException {
@@ -110,7 +110,7 @@ public class Controller {
 		return true;
 	}
 
-	public void doJob(int sleepTime) {
+	public void doJob(int sleepTime) throws InterruptedException {
 		this.sleepTime = sleepTime;
 		List<Floor> floors = building.getFloors();
 		Iterator<Floor> itr = floors.iterator();
@@ -118,7 +118,7 @@ public class Controller {
 		int isElevatorMoved = 0;
 		
 		Object waitObject;
-		try {
+		
 			while (isElevatorMoved < 2) {
 				while (itr.hasNext()) {
 					floor = elevator.getCurrentFloor();
@@ -134,15 +134,15 @@ public class Controller {
 					}
 					synchronized (this) {
 						while (TransportationTask.getReadyThreads() != 0) {
-							System.out.println("Controller go sleep " + floor);
+							LOG.trace("Controller go sleep " + floor);
 							this.wait();
-							System.out.println("Controller wakeup " + floor);
+							LOG.trace("Controller wakeup " + floor);
 						}
 						changeNextFloor();
 
 					}
 
-					System.out.println("Controller search nextFloor");
+					LOG.trace("Controller search nextFloor");
 					while (itr.hasNext()) {
 						floor = itr.next();
 						elevator.move(floor);
@@ -182,8 +182,5 @@ public class Controller {
 					break;
 				}
 			}
-		} catch (InterruptedException e) {
-
-		}
-	}
+			}
 }

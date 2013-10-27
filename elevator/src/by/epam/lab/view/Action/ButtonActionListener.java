@@ -49,7 +49,8 @@ public class ButtonActionListener implements ActionListener {
 		case ABORT_ACTION:
 			viewController.abort();
 		 	break;
-		
+		case VIEW_LOG_ACTION:
+			viewController.viewLog();
 			};
 
 	}

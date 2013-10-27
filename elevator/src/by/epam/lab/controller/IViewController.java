@@ -4,6 +4,6 @@ public interface IViewController extends Runnable{
        
        public void start();
        public void abort();
-       public void view();
+       public void viewLog();
        public void updateView();
 }

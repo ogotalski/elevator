@@ -7,13 +7,13 @@ import by.epam.lab.controller.IViewController;
 
 
 public class UpdateListener implements ActionListener {
-	IViewController controller;
-	public UpdateListener(IViewController controller){
-		this.controller = controller;
-	}
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		controller.updateView();
-		
-	}
+        IViewController controller;
+        public UpdateListener(IViewController controller){
+                this.controller = controller;
+        }
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+                controller.updateView();
+                
+        }
 }

@@ -1,6 +1,7 @@
 package by.epam.lab.view;
 
 import java.awt.Button;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
@@ -15,6 +16,7 @@ import by.epam.lab.view.Action.ButtonActionListener;
 import by.epam.lab.view.Action.ButtonActionListener.ButtonActions;
 
 public class ControlPanel extends JPanel {
+	private static final Dimension DEFAULT_SIZE = new Dimension(Integer.MAX_VALUE, 50);
 	private JTextField storiesNumberField;
 	private JTextField elevatorCapacityField;
 	private JTextField passengersNumberField;
@@ -26,6 +28,7 @@ public class ControlPanel extends JPanel {
 		super();
 			
 		this.setLayout(new FlowLayout());
+		this.setMaximumSize(DEFAULT_SIZE);
 		JLabel label = new JLabel("Stories Number");
 		 storiesNumberField = new JTextField(String.valueOf(storiesNumber),5);
 		this.add(label);
