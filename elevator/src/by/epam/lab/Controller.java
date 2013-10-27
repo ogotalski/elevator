@@ -116,7 +116,7 @@ public class Controller {
 		Iterator<Floor> itr = floors.iterator();
 		Floor floor;
 		int isElevatorMoved = 0;
-		
+		LOG.info("STARTING_TRANSPORTATION");
 		Object waitObject;
 		
 			while (isElevatorMoved < 2) {
@@ -182,5 +182,6 @@ public class Controller {
 					break;
 				}
 			}
+			LOG.info("COMPLETION_TRANSPORTATION");
 			}
 }

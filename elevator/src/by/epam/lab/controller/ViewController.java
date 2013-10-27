@@ -104,6 +104,7 @@ public class ViewController implements IViewController {
           
 		JScrollPane scrollPane = new JScrollPane(logArea);
 		scrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE, 200));
+		scrollPane.setMinimumSize(new Dimension(Integer.MAX_VALUE, 200));
 		mainFrame.addComponent(scrollPane);
 		mainFrame.repaint();
 		LOG.addAppender(new TextAreaAppender(logArea));
@@ -162,6 +163,7 @@ public class ViewController implements IViewController {
 
 	@Override
 	public void abort() {
+		LOG.info("ABORTING_TRANSPORTATION");
 		threadGroup.interrupt();
 		timer.stop();
 	}
@@ -188,7 +190,7 @@ public class ViewController implements IViewController {
 						"Verify", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (InterruptedException e) {
-			System.out.println("Elevator interrupded");
+			LOG.trace("Elevator interrupded");
 		} finally {
 			controlPanel.setButtonAction(ButtonActions.VIEW_LOG_ACTION);
 		}
