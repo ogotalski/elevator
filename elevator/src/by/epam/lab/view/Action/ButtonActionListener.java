@@ -40,7 +40,7 @@ public class ButtonActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		
+
 		ButtonActions action = ButtonActions.getAction(ae.getActionCommand());
 		switch (action) {
 		case START_ACTION:
@@ -48,10 +48,10 @@ public class ButtonActionListener implements ActionListener {
 			break;
 		case ABORT_ACTION:
 			viewController.abort();
-		 	break;
+			break;
 		case VIEW_LOG_ACTION:
 			viewController.viewLog();
-			};
+		};
 
 	}
 

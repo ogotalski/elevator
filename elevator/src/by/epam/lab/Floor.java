@@ -29,12 +29,17 @@ public class Floor implements Comparable<Floor> {
 	public List<Passenger> getArrivalStoryContainer() {
 		return arrivalStoryContainer;
 	}
-    public synchronized Passenger[] getDispatchPassengers(){
-    	return   dispatchStoryContainer.toArray(new Passenger[dispatchStoryContainer.size()]);
-    }
-    public synchronized Passenger[] getArrivalPassengers(){
-    	return  arrivalStoryContainer.toArray(new Passenger[arrivalStoryContainer.size()]);
-    }
+
+	public synchronized Passenger[] getDispatchPassengers() {
+		return dispatchStoryContainer
+				.toArray(new Passenger[dispatchStoryContainer.size()]);
+	}
+
+	public synchronized Passenger[] getArrivalPassengers() {
+		return arrivalStoryContainer
+				.toArray(new Passenger[arrivalStoryContainer.size()]);
+	}
+
 	public void setArrivalStoryContainer(List<Passenger> arrivalStoryContainer) {
 		this.arrivalStoryContainer = arrivalStoryContainer;
 	}
@@ -51,9 +56,10 @@ public class Floor implements Comparable<Floor> {
 		dispatchStoryContainer.remove(passenger);
 	}
 
-	public synchronized void addDispatchPassenger (Passenger passenger){
+	public synchronized void addDispatchPassenger(Passenger passenger) {
 		dispatchStoryContainer.add(passenger);
 	}
+
 	public synchronized boolean hasPassengers() {
 		if (dispatchStoryContainer.size() > 0)
 			return true;
@@ -65,7 +71,7 @@ public class Floor implements Comparable<Floor> {
 	public int compareTo(Floor o) {
 		return o == null ? 1 : id - o.id;
 	}
-    
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,8 +97,13 @@ public class Floor implements Comparable<Floor> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Floor ");
+		builder.append("Floor [id=");
 		builder.append(id);
+		builder.append(", dispatchStoryContainer.size=");
+		builder.append(dispatchStoryContainer.size());
+		builder.append(", arrivalStoryContainer.size=");
+		builder.append(arrivalStoryContainer.size());
+		builder.append("]");
 		return builder.toString();
 	}
 

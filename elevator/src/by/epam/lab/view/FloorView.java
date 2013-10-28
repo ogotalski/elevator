@@ -11,7 +11,8 @@ import javax.swing.JPanel;
 import by.epam.lab.Passenger;
 
 public class FloorView extends JPanel {
-	private final static int size_Y = 40;
+
+	private final static int SIZE_Y = 40;
 	private final static int MARGIN_Y = 5;
 	private final static int MARGIN_X = 5;
 	private static int numPassengersView = 5;
@@ -24,22 +25,24 @@ public class FloorView extends JPanel {
 	}
 
 	private class PassengerContainerView extends JComponent {
+		private static final String SIZE = "Size = ";
 		private Passenger[] list;
 
 		public PassengerContainerView(Passenger[] list) {
 			super();
 			this.list = list;
-			this.setMaximumSize(new Dimension(Integer.MAX_VALUE, size_Y - 1));
-			this.setMinimumSize(new Dimension(size_Y - 5, size_Y - 5));
+			this.setMaximumSize(new Dimension(Integer.MAX_VALUE, SIZE_Y - 1));
+			this.setMinimumSize(new Dimension(SIZE_Y - MARGIN_X, SIZE_Y
+					- MARGIN_Y));
 			this.setPreferredSize(getMinimumSize());
 			if (list != null)
-				this.setToolTipText("Size = " + list.length);
+				this.setToolTipText(SIZE + list.length);
 		}
 
 		public synchronized void updateContainer(Passenger[] list) {
 			this.list = list;
 			if (list != null)
-				this.setToolTipText("Size = " + list.length);
+				this.setToolTipText(SIZE + list.length);
 		}
 
 		@Override
@@ -82,8 +85,8 @@ public class FloorView extends JPanel {
 			int heigth = (int) Math.round(g2.getFontMetrics()
 					.getStringBounds(ID, g2).getHeight());
 			g2.setColor(Color.RED);
-			g2.drawString(ID, x + MARGIN_X, size_Y - 3 * MARGIN_Y);
-			g2.draw(new Rectangle2D.Double(x, size_Y - 3 * MARGIN_Y - heigth,
+			g2.drawString(ID, x + MARGIN_X, SIZE_Y - 3 * MARGIN_Y);
+			g2.draw(new Rectangle2D.Double(x, SIZE_Y - 3 * MARGIN_Y - heigth,
 					width + 2 * MARGIN_X, heigth + 1 * MARGIN_Y));
 
 			return width + 2 * MARGIN_X;
@@ -94,13 +97,13 @@ public class FloorView extends JPanel {
 
 	private class ElevatorView extends PassengerContainerView {
 
-		private final int size_X = 35;
+		private final int SIZE_X = 35;
 
 		public ElevatorView(Passenger[] list) {
 			super(list);
-			this.setMaximumSize(new Dimension(size_X * numPassengersView,
-					size_Y));
-			this.setMinimumSize(new Dimension(size_X, size_Y));
+			this.setMaximumSize(new Dimension(SIZE_X * numPassengersView,
+					SIZE_Y));
+			this.setMinimumSize(new Dimension(SIZE_X, SIZE_Y));
 			this.setPreferredSize(getMaximumSize());
 			this.setSize(getMinimumSize());
 
@@ -125,13 +128,13 @@ public class FloorView extends JPanel {
 		super();
 
 		setBackground(Color.white);
-		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, size_Y));
-		this.setMinimumSize(new Dimension(100, size_Y));
+		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, SIZE_Y));
+
 		dispath = new PassengerContainerView(dispathStory);
 		arrival = new PassengerContainerView(arrivalStory);
 		elevator = new ElevatorView(null);
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		// this.setLayout(new BorderLayout());
+
 		this.add(arrival);
 		this.add(elevator);
 		this.add(dispath);

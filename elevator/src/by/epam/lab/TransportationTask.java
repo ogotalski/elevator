@@ -1,6 +1,14 @@
 package by.epam.lab;
+
 import static by.epam.lab.utils.AppLogger.*;
+
 public class TransportationTask implements Runnable {
+	private static final String TRANSPORTATION_INTERRUPDED = "TRANSPORTATION  interrupded ";
+	private static final String WAITING_FOR_DEBOARDING = "WAITING FOR DEBOARDING ";
+	private static final String WANT_TO_DEBOARD = "WANT TO DEBOARD ";
+	private static final String WAITING_FOR_BOARDING = "WAITING FOR BOARDING ";
+	private static final String WANT_TO_BOARD = "WANT TO BOARD ";
+	private static final String READY = "READY ";
 	private static int readyThreads = 0;
 	private Controller controller;
 	private final Passenger passenger;
@@ -37,8 +45,7 @@ public class TransportationTask implements Runnable {
 			Object waitObject = floor.getDispatchStoryContainer();
 			synchronized (controller) {
 				decReadyThreads();
-				LOG.trace("ready " + passenger);
-				//System.out.println("ready " + passenger);
+				LOG.trace(READY + passenger);
 				controller.notifyAll();
 
 			}
@@ -48,31 +55,29 @@ public class TransportationTask implements Runnable {
 			}
 
 			synchronized (waitObject) {
-				LOG.trace(passenger + " want to go");
+				LOG.trace(WANT_TO_BOARD + passenger.getId());
 				while (!controller.addPassenger(passenger)) {
-					LOG.trace(passenger + " go sleep1 "
-							+ Thread.currentThread().getId());
+					LOG.trace(WAITING_FOR_BOARDING + passenger.getId());
 					waitObject.wait();
-					LOG.trace(passenger + " want to go");
+					LOG.trace(WANT_TO_BOARD + passenger.getId());
 				}
 			}
 			floor = passenger.getDestFloor();
 			waitObject = floor.getArrivalStoryContainer();
 			synchronized (waitObject) {
-				LOG.trace(passenger + " want to out");
+				LOG.trace(WANT_TO_DEBOARD + passenger.getId());
 				while (!controller.removePassenger(passenger)) {
-					LOG.trace(passenger + " go sleep2 "
-							+ Thread.currentThread().getId());
+					LOG.trace(WAITING_FOR_DEBOARDING + passenger.getId());
 					waitObject.wait();
-					LOG.trace(passenger + " want to out");
+					LOG.trace(WANT_TO_DEBOARD + passenger.getId());
 				}
 				passenger.setTransportationState(TransportationState.COMPLETED);
 			}
 
 		} catch (InterruptedException e) {
 			passenger.setTransportationState(TransportationState.ABORTED);
-			LOG.trace("Transportation  interrupded " + passenger);
-			
+			LOG.trace(TRANSPORTATION_INTERRUPDED + passenger.getId());
+
 		}
 
 	}

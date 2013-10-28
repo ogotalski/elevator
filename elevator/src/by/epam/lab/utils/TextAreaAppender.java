@@ -16,7 +16,8 @@ public class TextAreaAppender extends WriterAppender {
 		super();
 		this.textArea = textArea;
 		this.setThreshold(Level.INFO);
-		this.setLayout(new PatternLayout(" %m%n"));
+		final String PATTERN = " %m%n";
+		this.setLayout(new PatternLayout(PATTERN));
 	}
 	public void setTextArea(JTextArea textArea) {
 		this.textArea = textArea;

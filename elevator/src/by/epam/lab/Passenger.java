@@ -1,12 +1,12 @@
 package by.epam.lab;
 
 public class Passenger {
-	 private static int nextId = 1;
-	 private TransportationState transportationState;
-     private Floor destFloor;
-     private Floor currentFloor;
-     private final int id; 
-	
+	private static int nextId = 1;
+	private TransportationState transportationState;
+	private Floor destFloor;
+	private Floor currentFloor;
+	private final int id;
+
 	public Passenger(Floor currentFloor, Floor destFloor) {
 		synchronized (Passenger.class) {
 			id = nextId++;
@@ -73,13 +73,13 @@ public class Passenger {
 		builder.append("Passenger [id=");
 		builder.append(id);
 		builder.append(", currentFloor=");
-		builder.append(currentFloor);
+		builder.append(currentFloor.getId());
 		builder.append(", destFloor=");
-		builder.append(destFloor);
-		builder.append("]");
+		builder.append(destFloor.getId());
+		builder.append(", transportationState=");
 		builder.append(transportationState);
+		builder.append("]");
 		return builder.toString();
 	}
-	
-     
+
 }

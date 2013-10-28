@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Elevator {
+	private static final String ELEVATOR_CONTAINS = "ELEVATOR CONTAINS :";
+	private static final String BOADING_OF_PASSENGER_D_ON_STORY_D = "BOADING_OF_PASSENGER ( %d on story %d )";
+	private static final String DEBOADING_OF_PASSENGER_D_ON_STORY_D = "DEBOADING_OF_PASSENGER ( %d on story %d )";
+	private static final String MOVING_ELEVATOR_FROM_D_TO_D = "MOVING_ELEVATOR (from %d to %d)";
+	public static final String ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0 = "Elevator capacity must be greater than 0";
+	public static final int MIN_ELEVATOR_COMPACITY = 1;
 	private Floor currentFloor;
 	private final int capacity;
 
@@ -17,27 +23,28 @@ public class Elevator {
 
 	public Elevator(Floor floor) {
 		super();
-		capacity = 1;
+		capacity = MIN_ELEVATOR_COMPACITY;
 		currentFloor = floor;
 		elevatorContainer = new ArrayList<Passenger>(capacity);
 	}
 
 	public Elevator(Floor currentFloor, int capacity) {
 		super();
-		if (capacity < 1)
+		if (capacity < MIN_ELEVATOR_COMPACITY)
 			throw new IllegalArgumentException(
-					"Elevator capacity must be greater than 0");
+					ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0);
 		this.currentFloor = currentFloor;
 		this.capacity = capacity;
 		elevatorContainer = new ArrayList<Passenger>(capacity);
 	}
 
 	public synchronized void move(Floor floor) {
-		LOG.info("MOVING_ELEVATOR (from " + currentFloor + " to " + floor + ")");
+		LOG.info(String.format(MOVING_ELEVATOR_FROM_D_TO_D,
+				currentFloor.getId(), floor.getId()));
 		currentFloor = floor;
 		LOG.trace("=========================================================");
 		for (Passenger passenger : elevatorContainer)
-			LOG.trace("ELEVATOR MOVED " + currentFloor.getId() + passenger);
+			LOG.trace(ELEVATOR_CONTAINS + passenger);
 		LOG.trace("=========================================================");
 	}
 
@@ -68,8 +75,8 @@ public class Elevator {
 	public synchronized boolean addPassenger(Passenger passenger) {
 		if (passenger.getCurrentFloor().equals(currentFloor) && hasPlaces()) {
 			elevatorContainer.add(passenger);
-			LOG.info("BOADING_OF_PASSENGER ( " + passenger.getId()
-					+ " on story " + currentFloor.getId() + ")");
+			LOG.info(String.format(BOADING_OF_PASSENGER_D_ON_STORY_D,
+					passenger.getId(), currentFloor.getId()));
 			return true;
 		} else {
 			return false;
@@ -80,11 +87,24 @@ public class Elevator {
 		if (passenger.getDestFloor().equals(currentFloor)) {
 			passenger.setCurrentFloor(currentFloor);
 			elevatorContainer.remove(passenger);
-			LOG.info("DEBOADING_OF_PASSENGER ( " + passenger.getId()
-					+ " on story " + currentFloor.getId() + ")");
+			LOG.info(String.format(DEBOADING_OF_PASSENGER_D_ON_STORY_D,
+					passenger.getId(), currentFloor.getId()));
 			return true;
 		} else
 			return false;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Elevator [capacity=");
+		builder.append(capacity);
+		builder.append(", currentFloor=");
+		builder.append(currentFloor.getId());
+		builder.append(", elevatorContainer.size=");
+		builder.append(elevatorContainer.size());
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

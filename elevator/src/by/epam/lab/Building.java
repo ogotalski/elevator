@@ -7,6 +7,11 @@ import java.util.Random;
 import static by.epam.lab.utils.AppLogger.*;
 
 public class Building {
+	private static final String VALIDATION_HAS_ERRORS = "VALIDATION HAS ERRORS";
+	private static final String VALIDATION_COMPLETE = "VALIDATION COMPLETE";
+	private static final String VALIDATION_ERROR = "VALIDATION ERROR :";
+	private static final String PASSENGERS_NUMBER_MUST_BE_GREATER_THAN_0 = "Passengers number must be greater than 0";
+	private static final String STORIES_NUMBER_MUST_BE_GREATER_THAN_1 = "Stories number must be greater than 1";
 	private final List<Floor> floors;
 	private final Elevator elevator;
 	private final Controller controller;
@@ -31,10 +36,10 @@ public class Building {
 	public static Building getBuilding(int storiesNumber, int elevatorCapacity) {
 		if (storiesNumber <= 1)
 			throw new IllegalArgumentException(
-					"Stories number must be greater than 1");
-		if (elevatorCapacity <= 0)
+					STORIES_NUMBER_MUST_BE_GREATER_THAN_1);
+		if (elevatorCapacity <= Elevator.MIN_ELEVATOR_COMPACITY)
 			throw new IllegalArgumentException(
-					"Elevator capacity must be greater than 0");
+					Elevator.ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0);
 
 		List<Floor> floorList = new ArrayList<Floor>(storiesNumber);
 		Floor floor = new Floor();
@@ -50,7 +55,7 @@ public class Building {
 	public void fillBuilding(int passengersNumber) {
 		if (passengersNumber < 1)
 			throw new IllegalArgumentException(
-					"Passengers number must be greater than 0");
+					PASSENGERS_NUMBER_MUST_BE_GREATER_THAN_0);
 
 		Floor[] floorsArr = floors.toArray(new Floor[floors.size()]);
 		Random random = new Random();
@@ -89,29 +94,30 @@ public class Building {
 
 	public boolean verify() {
 		boolean isOk = true;
-		synchronized (controller) {
-
+		
 			for (Floor floor : floors) {
 				for (Passenger passenger : floor.getArrivalStoryContainer()) {
 					if (passenger.getCurrentFloor() != passenger.getDestFloor()
 							|| passenger.getTransportationState() != TransportationState.COMPLETED) {
 						isOk = false;
-						LOG.error("VERIFY ERROR :" + passenger);
+						LOG.error(VALIDATION_ERROR + passenger);
 					}
 
 				}
 				if (!floor.getDispatchStoryContainer().isEmpty()) {
-					LOG.error("VERIFY ERROR :" + floor.getId() + "size "
-							+ floor.getDispatchStoryContainer().size());
+					LOG.error(VALIDATION_ERROR + floor);
 					isOk = false;
 				}
 
 			}
-		}
+		    if (elevator.getElevatorContainer().size()!=0)  {
+				LOG.error(VALIDATION_ERROR + elevator);
+				isOk = false;
+			}
 		if (isOk)
-			LOG.info("VERIFY COMLETED");
+			LOG.info(VALIDATION_COMPLETE);
 		else
-			LOG.error("VERIFY ERROR");
+			LOG.error(VALIDATION_HAS_ERRORS);
 
 		return isOk;
 	}

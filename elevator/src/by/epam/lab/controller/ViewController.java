@@ -30,6 +30,16 @@ import by.epam.lab.view.Action.UpdateListener;
 import static by.epam.lab.utils.AppLogger.*;
 
 public class ViewController implements IViewController {
+	private static final String VALIDATION_ERROR = "Validation error";
+	private static final String VALIDATION_COMPLETED = "Validation completed";
+	private static final String ELEVATOR_INTERRUPDED = "ELEVATOR interrupded";
+	private static final String ABORTING_TRANSPORTATION = "ABORTING_TRANSPORTATION";
+	private static final String INPUT_ERROR = "Input error";
+	private static final String ANIMATION_BOOST = "animationBoost";
+	private static final String PASSENGERS_NUMBER = "passengersNumber";
+	private static final String ELEVATOR_CAPACITY = "elevatorCapacity";
+	private static final String STORIES_NUMBER = "storiesNumber";
+	private static final String PROPERTIES_FILENAME = "config.properties";
 	private static final int SLEEP_MULTIPLIER = 25;
 	private static final int DEFAULT_SLEEP = 1000;
 	private int storiesNumber = 1;
@@ -52,14 +62,14 @@ public class ViewController implements IViewController {
 		Properties prop = new Properties();
 		try {
 
-			prop.load(new FileInputStream("config.properties"));
-			storiesNumber = Integer.parseInt(prop.getProperty("storiesNumber"));
+			prop.load(new FileInputStream(PROPERTIES_FILENAME));
+			storiesNumber = Integer.parseInt(prop.getProperty(STORIES_NUMBER));
 			elevatorCapacity = Integer.parseInt(prop
-					.getProperty("elevatorCapacity"));
+					.getProperty(ELEVATOR_CAPACITY));
 			passengersNumber = Integer.parseInt(prop
-					.getProperty("passengersNumber"));
-			animationBoost = Integer.parseInt(prop
-					.getProperty("animationBoost"));
+					.getProperty(PASSENGERS_NUMBER));
+			animationBoost = Integer
+					.parseInt(prop.getProperty(ANIMATION_BOOST));
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -94,14 +104,14 @@ public class ViewController implements IViewController {
 			controlPanel.setButtonAction(ButtonActions.ABORT_ACTION);
 			new Thread(threadGroup, this).start();
 		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(mainFrame,
-					e.getMessage(), "Input error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(mainFrame, e.getMessage(),
+					INPUT_ERROR, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void drawLogPanel() {
 		JTextArea logArea = new JTextArea();
-          
+
 		JScrollPane scrollPane = new JScrollPane(logArea);
 		scrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE, 200));
 		scrollPane.setMinimumSize(new Dimension(Integer.MAX_VALUE, 200));
@@ -163,7 +173,7 @@ public class ViewController implements IViewController {
 
 	@Override
 	public void abort() {
-		LOG.info("ABORTING_TRANSPORTATION");
+		LOG.info(ABORTING_TRANSPORTATION);
 		threadGroup.interrupt();
 		timer.stop();
 	}
@@ -184,13 +194,13 @@ public class ViewController implements IViewController {
 		try {
 			building.startElevator(getSleepTime(animationBoost));
 			if (building.verify()) {
-				JOptionPane.showMessageDialog(mainFrame, "Verify complite");
+				JOptionPane.showMessageDialog(mainFrame, VALIDATION_COMPLETED);
 			} else {
-				JOptionPane.showMessageDialog(mainFrame, "Verify error",
-						"Verify", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(mainFrame, VALIDATION_ERROR,
+						"Validation", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (InterruptedException e) {
-			LOG.trace("Elevator interrupded");
+			LOG.trace(ELEVATOR_INTERRUPDED);
 		} finally {
 			controlPanel.setButtonAction(ButtonActions.VIEW_LOG_ACTION);
 		}
