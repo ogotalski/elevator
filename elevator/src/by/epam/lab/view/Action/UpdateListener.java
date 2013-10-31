@@ -3,12 +3,12 @@ package by.epam.lab.view.Action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import by.epam.lab.controller.IViewController;
+import by.epam.lab.controller.IAction;
 
 
 public class UpdateListener implements ActionListener {
-        IViewController controller;
-        public UpdateListener(IViewController controller){
+        IAction controller;
+        public UpdateListener(IAction controller){
                 this.controller = controller;
         }
         @Override

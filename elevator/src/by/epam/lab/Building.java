@@ -4,24 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import by.epam.lab.controller.Configuration;
 import static by.epam.lab.utils.AppLogger.*;
 
 public class Building {
 	private static final String VALIDATION_HAS_ERRORS = "VALIDATION HAS ERRORS";
 	private static final String VALIDATION_COMPLETE = "VALIDATION COMPLETE";
 	private static final String VALIDATION_ERROR = "VALIDATION ERROR :";
-	private static final String PASSENGERS_NUMBER_MUST_BE_GREATER_THAN_0 = "Passengers number must be greater than 0";
-	private static final String STORIES_NUMBER_MUST_BE_GREATER_THAN_1 = "Stories number must be greater than 1";
 	private final List<Floor> floors;
 	private final Elevator elevator;
-	private final Controller controller;
+	private final ElevatorController controller;
 
 	private Building(List<Floor> floors, Elevator elevator) {
 		super();
 
 		this.floors = floors;
 		this.elevator = elevator;
-		controller = new Controller(this, getElevator());
+		controller = new ElevatorController(this, getElevator());
 
 	}
 
@@ -33,17 +32,13 @@ public class Building {
 		return elevator;
 	}
 
-	public static Building getBuilding(int storiesNumber, int elevatorCapacity) {
-		if (storiesNumber <= 1)
-			throw new IllegalArgumentException(
-					STORIES_NUMBER_MUST_BE_GREATER_THAN_1);
-		if (elevatorCapacity <= Elevator.MIN_ELEVATOR_COMPACITY)
-			throw new IllegalArgumentException(
-					Elevator.ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0);
-
+	public static Building getBuilding() {
+		
+		Configuration configuration = Configuration.getConfiguration();
+		int storiesNumber = configuration.getStoriesNumber();
 		List<Floor> floorList = new ArrayList<Floor>(storiesNumber);
 		Floor floor = new Floor();
-		Elevator elevator = new Elevator(floor, elevatorCapacity);
+		Elevator elevator = new Elevator(floor, configuration.getElevatorCapacity());
 		floorList.add(floor);
 		for (int i = 1; i < storiesNumber; i++) {
 			floorList.add(new Floor());
@@ -52,11 +47,10 @@ public class Building {
 
 	}
 
-	public void fillBuilding(int passengersNumber) {
-		if (passengersNumber < 1)
-			throw new IllegalArgumentException(
-					PASSENGERS_NUMBER_MUST_BE_GREATER_THAN_0);
+	public void fillBuilding() {
 
+		Configuration configuration = Configuration.getConfiguration();
+		int passengersNumber = configuration.getPassengersNumber();
 		Floor[] floorsArr = floors.toArray(new Floor[floors.size()]);
 		Random random = new Random();
 		Floor curFloor, destFloor;
@@ -72,23 +66,19 @@ public class Building {
 		}
 	}
 
-	public void startElevator(int animationBoost) throws InterruptedException {
+	public void startElevator(int sleepTime) throws InterruptedException {
 		ThreadGroup group = Thread.currentThread().getThreadGroup();
+		controller.setNotReadyPassengers(Configuration.getConfiguration().getPassengersNumber());
 		for (Floor floor : floors) {
 			for (Passenger passenger : floor.getDispatchStoryContainer()) {
-				TransportationTask.incReadyThreads();
 				new Thread(group, new TransportationTask(controller, passenger))
 						.start();
 
 			}
 		}
 
-		synchronized (controller) {
-			while (TransportationTask.getReadyThreads() != 0)
-				controller.wait();
-
-		}
-		controller.doJob(animationBoost);
+	
+		controller.doJob(sleepTime);
 
 	}
 

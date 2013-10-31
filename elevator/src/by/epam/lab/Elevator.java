@@ -15,6 +15,7 @@ public class Elevator {
 	private Floor currentFloor;
 	private final int capacity;
 
+	
 	public int getCapacity() {
 		return capacity;
 	}
@@ -30,12 +31,16 @@ public class Elevator {
 
 	public Elevator(Floor currentFloor, int capacity) {
 		super();
-		if (capacity < MIN_ELEVATOR_COMPACITY)
-			throw new IllegalArgumentException(
-					ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0);
+		validateCapacity(capacity);
 		this.currentFloor = currentFloor;
 		this.capacity = capacity;
 		elevatorContainer = new ArrayList<Passenger>(capacity);
+	}
+
+	public static void validateCapacity(int capacity) {
+		if (capacity < MIN_ELEVATOR_COMPACITY)
+			throw new IllegalArgumentException(
+					ELEVATOR_CAPACITY_MUST_BE_GREATER_THAN_0);
 	}
 
 	public synchronized void move(Floor floor) {

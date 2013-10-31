@@ -9,31 +9,16 @@ public class TransportationTask implements Runnable {
 	private static final String WAITING_FOR_BOARDING = "WAITING FOR BOARDING ";
 	private static final String WANT_TO_BOARD = "WANT TO BOARD ";
 	private static final String READY = "READY ";
-	private static int readyThreads = 0;
-	private Controller controller;
+	private ElevatorController controller;
 	private final Passenger passenger;
 
-	public TransportationTask(Controller controller, Passenger passenger) {
+	public TransportationTask(ElevatorController controller, Passenger passenger) {
 		super();
 		this.controller = controller;
 		this.passenger = passenger;
 	}
 
-	public synchronized static void incReadyThreads() {
-		readyThreads++;
-	}
-
-	public synchronized static int getReadyThreads() {
-		return readyThreads;
-	}
-
-	public synchronized static void decReadyThreads() {
-		readyThreads--;
-	}
-
-	public synchronized static void setReadyThreads(int i) {
-		readyThreads = i;
-	}
+	
 
 	@Override
 	public void run() {
@@ -44,7 +29,7 @@ public class TransportationTask implements Runnable {
 			Floor floor = passenger.getCurrentFloor();
 			Object waitObject = floor.getDispatchStoryContainer();
 			synchronized (controller) {
-				decReadyThreads();
+				controller.ready();
 				LOG.trace(READY + passenger);
 				controller.notifyAll();
 

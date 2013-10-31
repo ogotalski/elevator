@@ -6,6 +6,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 public class MainFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String ELEVATOR_TASK = "Elevator Task";
 	private static final Dimension DEFAULT_SIZE = new Dimension(1100, 800);
 

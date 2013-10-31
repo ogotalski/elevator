@@ -6,7 +6,7 @@ import java.util.List;
 import by.epam.lab.utils.ReverseIterator;
 import static by.epam.lab.utils.AppLogger.*;
 
-public class Controller {
+public class ElevatorController {
 	private static final String COMPLETION_TRANSPORTATION = "COMPLETION_TRANSPORTATION";
 	private static final String WAITING_FOR_UNBOARDING_ON = ": waiting for unboarding on ";
 	private static final String CONTROLLER_SEARCH_NEXT_FLOOR = "Controller search nextFloor";
@@ -32,8 +32,19 @@ public class Controller {
 	private Floor nextFloor;
 	private int outOnNextFloor;
 	private boolean working;
+	private int notReadyPassengers = 0;
+	private int inOnCurrFloor;
+	
 
-	public Controller(Building building, Elevator elevator) {
+	public synchronized  void ready() {
+		notReadyPassengers--;
+	}
+
+	public void setNotReadyPassengers(int i) {
+		notReadyPassengers = i;
+	}
+	
+	public ElevatorController(Building building, Elevator elevator) {
 		super();
 		this.building = building;
 		this.elevator = elevator;
@@ -88,7 +99,7 @@ public class Controller {
 				if (!elevator.getCurrentFloor().equals(
 						passenger.getCurrentFloor()))
 					return false;
-				TransportationTask.decReadyThreads();
+				inOnCurrFloor--;
 				if (elevator.getCurrentFloor().compareTo(
 						passenger.getDestFloor())
 						* direction.intDirection > 0)
@@ -132,7 +143,11 @@ public class Controller {
 		int elevatorMoved = 0;
 		LOG.info(STARTING_TRANSPORTATION);
 		Object waitObject;
+		synchronized (this) {
+			while (notReadyPassengers != 0)
+				this.wait();
 
+		}
 		final int TWO_DIRECTIONS = 2;
 		while (elevatorMoved < TWO_DIRECTIONS) {
 			while (itr.hasNext()) {
@@ -141,14 +156,14 @@ public class Controller {
 				synchronized (waitObject) {
 					working = true;
 					if (floor.hasPassengers()) {
-						TransportationTask.setReadyThreads(floor
-								.getDispatchStoryContainer().size());
+						inOnCurrFloor =floor
+								.getDispatchStoryContainer().size();
 						waitObject.notifyAll();
 
 					}
 				}
 				synchronized (this) {
-					while (TransportationTask.getReadyThreads() != 0) {
+					while (inOnCurrFloor != 0) {
 						LOG.trace(CONTROLLER + WAITING_FOR_BOARDING_ON + floor);
 						this.wait();
 						LOG.trace(CONTROLLER + WAKES_UP_ON + floor);

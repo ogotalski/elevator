@@ -1,21 +1,23 @@
 package by.epam.lab.view;
 
-import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
-import by.epam.lab.view.Action.ButtonActionListener;
+import by.epam.lab.controller.Configuration;
 import by.epam.lab.view.Action.ButtonActionListener.ButtonActions;
 
 public class ControlPanel extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String ANIMATION_BOOST = "Animation Boost";
 	private static final String PASSENGERS_NUMBER = "Passengers Number";
 	private static final String ELEVATOR_CAPACITY = "Elevator Capacity";
@@ -28,29 +30,28 @@ public class ControlPanel extends JPanel {
 	private JSlider animationBoostSlider;
 	private JButton button;
 
-	public ControlPanel(int storiesNumber, int elevatorCapacity,
-			int passengersNumber, int animationBoost, int maxBoost) {
+	public ControlPanel() {
 		super();
-
+        Configuration configuration = Configuration.getConfiguration();
 		this.setLayout(new FlowLayout());
 		this.setMaximumSize(DEFAULT_SIZE);
 		JLabel label = new JLabel(STORIES_NUMBER);
-		storiesNumberField = new JTextField(String.valueOf(storiesNumber), 5);
+		storiesNumberField = new JTextField(String.valueOf(configuration.getStoriesNumber()), 5);
 		this.add(label);
 		this.add(storiesNumberField);
 		label = new JLabel(ELEVATOR_CAPACITY);
 		elevatorCapacityField = new JTextField(
-				String.valueOf(elevatorCapacity), 5);
+				String.valueOf(configuration.getElevatorCapacity()), 5);
 		this.add(label);
 		this.add(elevatorCapacityField);
 		label = new JLabel(PASSENGERS_NUMBER);
 		passengersNumberField = new JTextField(
-				String.valueOf(passengersNumber), 5);
+				String.valueOf(configuration.getPassengersNumber()), 5);
 		this.add(label);
 		this.add(passengersNumberField);
 		label = new JLabel(ANIMATION_BOOST);
-		animationBoostSlider = new JSlider(0, maxBoost);
-		animationBoostSlider.setValue(animationBoost);
+		animationBoostSlider = new JSlider(0,configuration.getMaxBoost());
+		animationBoostSlider.setValue(configuration.getAnimationBoost());
 		animationBoostSlider.setMajorTickSpacing(10);
 		animationBoostSlider.setMinorTickSpacing(1);
 		animationBoostSlider.setPaintTicks(true);

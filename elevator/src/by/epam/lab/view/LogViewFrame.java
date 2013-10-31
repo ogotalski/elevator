@@ -11,6 +11,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class LogViewFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String LOGFILE_NAME = "logfile.log";
 	private static final Dimension DEFAULT_SIZE = new Dimension(1000, 800);
 

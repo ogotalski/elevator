@@ -12,6 +12,10 @@ import by.epam.lab.Passenger;
 
 public class FloorView extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final static int SIZE_Y = 40;
 	private final static int MARGIN_Y = 5;
 	private final static int MARGIN_X = 5;
@@ -25,6 +29,10 @@ public class FloorView extends JPanel {
 	}
 
 	private class PassengerContainerView extends JComponent {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private static final String SIZE = "Size = ";
 		private Passenger[] list;
 
@@ -51,7 +59,7 @@ public class FloorView extends JPanel {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setColor(Color.BLUE);
 			drawContainer(g2);
-			String ID;
+
 			int x = 2;
 			synchronized (this) {
 
@@ -78,7 +86,6 @@ public class FloorView extends JPanel {
 
 		public int drawPassenger(Graphics2D g2, Passenger passenger, int x) {
 			String ID = String.valueOf(passenger.getId());
-			int y;
 
 			int width = (int) Math.round(g2.getFontMetrics()
 					.getStringBounds(ID, g2).getWidth());
@@ -97,6 +104,10 @@ public class FloorView extends JPanel {
 
 	private class ElevatorView extends PassengerContainerView {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final int SIZE_X = 35;
 
 		public ElevatorView(Passenger[] list) {

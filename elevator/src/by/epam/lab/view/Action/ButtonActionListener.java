@@ -3,11 +3,10 @@ package by.epam.lab.view.Action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import by.epam.lab.controller.IViewController;
-import by.epam.lab.view.ControlPanel;
+import by.epam.lab.controller.IAction;
 
 public class ButtonActionListener implements ActionListener {
-	private IViewController viewController;
+	private IAction viewController;
 
 	public static enum ButtonActions {
 		START_ACTION("Start"), ABORT_ACTION("Abort"), VIEW_LOG_ACTION(
@@ -33,7 +32,7 @@ public class ButtonActionListener implements ActionListener {
 
 	}
 
-	public ButtonActionListener(IViewController viewController) {
+	public ButtonActionListener(IAction viewController) {
 		super();
 		this.viewController = viewController;
 	}
